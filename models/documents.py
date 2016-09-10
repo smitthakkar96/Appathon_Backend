@@ -1,5 +1,6 @@
 from __init__ import *
 from passlib.apps import custom_app_context as pwd_context
+from itsdangerous import URLSafeSerializer
 from constants import *
 from embedded_documents import *
 from datetime import *
@@ -15,6 +16,10 @@ class User(DynamicDocument):
 
     def verify_password(self, password):
         return pwd_context.verify(password, self.password)
+
+    def generate_auth_token(self):
+        s = URLSafeSerializer(SECRET_KEY)
+        return s.dumps(str(self.id))
 
 class Question(DynamicDocument):
     question = StringField()
